@@ -7,7 +7,12 @@ use Illuminate\Support\Facades\Log;
 use LINE\LINEBot;
 use LINE\LINEBot\Event\MessageEvent\TextMessage;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
+
 use App\Services\Gurunavi;
+use App\Services\RestaurantBubbleBuilder;
+
+use LINE\LINEBot\MessageBuilder\FlexMessageBuilder;
+use LINE\LINEBot\MessageBuilder\Flex\ContainerBuilder\CarouselContainerBuilder;
 
 
 class LineBotController extends Controller
@@ -47,18 +52,37 @@ class LineBotController extends Controller
                 continue;
             }
 
-            $replyText = '';
-            foreach($gurunaviResponse['rest'] as $restaurant) {
-                $replyText .=
-                    $restaurant['name'] . "\n" .
-                    $restaurant['url'] . "\n" .
-                    "\n";
+            // メッセージをFlex Messageに変更したため削除
+            // $replyText = '';
+            // foreach($gurunaviResponse['rest'] as $restaurant) {
+            //     $replyText .=
+            //         $restaurant['name'] . "\n" .
+            //         $restaurant['url'] . "\n" .
+            //         "\n";
+            // }
+
+            $bubbles = [];
+            foreach ($gurunaviResponse['rest'] as $restaurant) {
+                $bubble = RestaurantBubbleBuilder::builder();
+                $bubble->setContents($restaurant);
+                $bubbles[] = $bubble;
             }
 
-            $replyToken = $event->getReplyToken();
+            $carousel = CarouselContainerBuilder::builder();
+            $carousel->setContents($bubbles);
+
+            $flex = FlexMessageBuilder::builder();
+            $flex->setAltText('検索結果');
+            $flex->setContents($carousel);
+
+            $lineBot->replyMessage($event->getReplyToken(), $flex);
+
+            // メッセージをFlex Messageに変更したため削除
+            // $replyToken = $event->getReplyToken();
             // オウム返しの記述内容をぐるなびからのレスポンスに変更したので削除
             // $replyText = $event->getText();
-            $lineBot->replyText($replyToken, $replyText);
+            // メッセージをFlex Messageに変更したため削除
+            // $lineBot->replyText($replyToken, $replyText);
         }
 
     }
