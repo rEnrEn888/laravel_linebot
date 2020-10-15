@@ -22,7 +22,5 @@ TabemonoReserch
 - LINEアカウント
 - ぐるなびAPIアカウント
 
-# 画面仕様
-本アプリケーションはLINE上で動作するため、割愛する。
-
-# 機能仕様
+# demo
+![demo](https://user-images.githubusercontent.com/69042358/96118599-b254ae00-0f26-11eb-96a4-9dd598d8ffa6.gif)
